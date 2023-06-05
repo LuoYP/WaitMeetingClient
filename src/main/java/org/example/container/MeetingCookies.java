@@ -10,6 +10,8 @@ public class MeetingCookies {
 
     private static final String MEET_ROOM = "meet-room";
 
+    private static final String USERNAME = "username";
+
     private static final Map<String, Object> COOKIES = new ConcurrentHashMap<>();
 
     public static MeetingRoom getMeetRoom() {
@@ -21,6 +23,21 @@ public class MeetingCookies {
             throw new RuntimeException("current meeting is not finish!");
         }
         COOKIES.put(MEET_ROOM, meetingRoom);
+    }
+
+    public static String getUsername() {
+        return (String) COOKIES.get(USERNAME);
+    }
+
+    public static void login(String username) {
+        if (Objects.nonNull(COOKIES.get(USERNAME))) {
+            throw new RuntimeException("you must logout!");
+        }
+        COOKIES.put(USERNAME, username);
+    }
+
+    public static void logout() {
+        COOKIES.remove(USERNAME);
     }
 
     public static void removeMeetRoom() {
