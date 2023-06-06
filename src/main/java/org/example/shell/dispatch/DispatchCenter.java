@@ -43,7 +43,7 @@ public class DispatchCenter {
                     String optionDescription = CharSequenceUtil.isBlank(shellOption.description()) ? parameter.getName() : shellOption.description();
                     methodDefinition.args().put(name, optionDescription);
                 }
-
+                methodDefinition.setMethod(method);
                 Object shellInstance = ReflectUtil.newInstance(shellClass);
                 Pair<Object, MethodDefinition> pair = Pair.of(shellInstance, methodDefinition);
                 SHELL_METHODS.put(command, pair);

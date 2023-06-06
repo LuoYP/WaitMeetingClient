@@ -1,5 +1,6 @@
 package org.example.shell;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Pair;
 import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.ClassUtil;
@@ -8,10 +9,7 @@ import org.example.shell.dispatch.DispatchCenter;
 import org.example.shell.dispatch.MethodDefinition;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 public class ShellContext {
 
@@ -48,6 +46,17 @@ public class ShellContext {
                 parameters = Arrays.copyOfRange(split, 1, split.length);
             }
             try {
+                if (Objects.nonNull(parameters) && parameters.length == 1 && parameters[0].equals("-h")) {
+                    MethodDefinition methodDefinition = methodPair.getValue();
+                    System.out.print(methodDefinition.command() + ": " + methodDefinition.description());
+                    Map<String, String> args = methodDefinition.args();
+                    if (CollUtil.isNotEmpty(args)) {
+                        System.out.print(";参数列表: (");
+                        args.forEach((key, value) -> System.out.print(key + ": " + value + " "));
+                    }
+                    System.out.println(")");
+                    continue;
+                }
                 if (Objects.nonNull(parameters)) {
                     result = method.invoke(instance, (Object[]) parameters);
                 } else {

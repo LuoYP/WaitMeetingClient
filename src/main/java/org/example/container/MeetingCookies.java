@@ -19,9 +19,6 @@ public class MeetingCookies {
     }
 
     public static void addMeetRoom(MeetingRoom meetingRoom) {
-        if (Objects.nonNull(COOKIES.get(MEET_ROOM))) {
-            throw new RuntimeException("current meeting is not finish!");
-        }
         COOKIES.put(MEET_ROOM, meetingRoom);
     }
 
