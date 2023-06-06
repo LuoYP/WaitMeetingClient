@@ -5,6 +5,7 @@ import cn.hutool.core.text.CharSequenceUtil;
 import cn.hutool.core.util.ClassUtil;
 import org.example.shell.annotation.Shell;
 import org.example.shell.dispatch.DispatchCenter;
+import org.example.shell.dispatch.MethodDefinition;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -34,13 +35,13 @@ public class ShellContext {
             if ("exit".equals(command) || "quit".equals(command)) {
                 break;
             }
-            Pair<Object, Method> methodPair = DispatchCenter.loadMethodByCommand(command);
+            Pair<Object, MethodDefinition> methodPair = DispatchCenter.loadMethodByCommand(command);
             if (Objects.isNull(methodPair)) {
                 System.out.println("该命令暂不支持");
                 continue;
             }
             Object instance = methodPair.getKey();
-            Method method = methodPair.getValue();
+            Method method = methodPair.getValue().method();
             String[] parameters = null;
             Object result;
             if (split.length > 1) {

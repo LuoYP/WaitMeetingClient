@@ -6,8 +6,9 @@ import org.example.shell.ShellContext;
 
 @RpcClientApplication(rpcApiPackages = {"org.example.communication.server.api"}, protocols = {Protocol.TCP, Protocol.UDP})
 public class MeetingClient {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception{
         RpcClient.run(MeetingClient.class);
+        Thread.sleep(2000);
         ShellContext.run(MeetingClient.class);
     }
 }

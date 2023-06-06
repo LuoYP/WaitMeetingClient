@@ -7,12 +7,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Documented
-@Target(ElementType.METHOD)
+@Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ShellMethod {
+public @interface ShellOption {
 
-    //default methodName
-    String command() default "";
+    String name() default "";
 
     String description() default "";
 }
