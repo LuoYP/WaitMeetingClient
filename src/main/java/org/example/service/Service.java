@@ -49,7 +49,7 @@ public class Service {
                 AudioInputStream audioInputStream = new AudioInputStream(line);
 
                 RpcAudioFormat rpcAudioFormat = new RpcAudioFormat(44100.0F, 16, 2, true, false);
-                RpcSourceDataLine sourceDataLine = RpcSourceDataLine.build(rpcAudioFormat, roomNumber);
+                RpcSourceDataLine sourceDataLine = RpcSourceDataLine.build(rpcAudioFormat, CharSequenceUtil.join("#", roomNumber, username));
                 sourceDataLine.start();
                 byte[] bytes = new byte[1024];
                 while (audioInputStream.read(bytes, 0, 1024) != -1) {

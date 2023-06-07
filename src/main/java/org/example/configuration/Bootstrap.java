@@ -8,6 +8,9 @@ import org.example.common.handler.Filter;
 import org.example.container.MeetingCookies;
 import org.example.schedule.TimeWheel;
 
+import java.util.List;
+import java.util.Objects;
+
 @Configuration
 public class Bootstrap {
 
@@ -18,14 +21,20 @@ public class Bootstrap {
 
     @Bean
     public Filter filter() {
-        return (roomNumber) -> {
-            if (Constants.MULTICAST.equals(roomNumber)) {
-                return true;
-            }
-            if (CharSequenceUtil.isBlank(roomNumber)) {
+        return (authentication) -> {
+            if (Objects.isNull(MeetingCookies.getMeetRoom())) {
                 return false;
             }
-            return CharSequenceUtil.equals(roomNumber, MeetingCookies.getMeetRoom().roomNumber());
+            if (Constants.MULTICAST.equals(authentication)) {
+                return true;
+            }
+            if (CharSequenceUtil.isBlank(authentication)) {
+                return false;
+            }
+            List<String> split = CharSequenceUtil.split(authentication, "#");
+            String roomNumber = split.get(0);
+            String username = split.get(1);
+            return CharSequenceUtil.equals(roomNumber, MeetingCookies.getMeetRoom().roomNumber()) && !CharSequenceUtil.equals(username, MeetingCookies.getUsername());
         };
     }
 }
