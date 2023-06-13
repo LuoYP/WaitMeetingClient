@@ -12,13 +12,20 @@ import org.example.shell.annotation.ShellMethod;
 import org.example.shell.annotation.ShellOption;
 
 import javax.sound.sampled.*;
-import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 @Shell
 public class Service {
 
     private final MeetingRoomService meetingRoomService = (MeetingRoomService) Factory.getBeanNotNull(MeetingRoomService.class);
+
+    private ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(4, 10, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(10));
+
+    private Future<?> submit = null;
 
     @ShellMethod(description = "登录")
     public String login(@ShellOption(description = "用户名") String username) {
@@ -39,7 +46,7 @@ public class Service {
         String username = check();
         MeetingRoom meetingRoom = meetingRoomService.joinRoom(roomNumber, username);
         MeetingCookies.addMeetRoom(meetingRoom);
-        new Thread(() -> {
+        submit = threadPoolExecutor.submit(() -> {
             try {
                 AudioFormat audioFormat = new AudioFormat(44100.0F, 16, 2, true, false);
                 DataLine.Info dataLineInfo = new DataLine.Info(TargetDataLine.class, audioFormat);
@@ -58,7 +65,13 @@ public class Service {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-        }).start();
+        });
+        return "success";
+    }
+
+    @ShellMethod(description = "退出会议")
+    public String shutdown() {
+        submit.cancel(true);
         return "success";
     }
 
